@@ -5,8 +5,10 @@ P = TypeVar('P', bound='Perceptron')
 class Perceptron:
     w = np.array([0, 0])
     b = 0
+    eta = 1
     modifed = True
-    def __init__(self) -> None:
+    def __init__(self, eta = 1) -> None:
+        self.eta = eta
         pass
 
     def _fit_once(self, X, y) -> None:
@@ -15,8 +17,8 @@ class Perceptron:
             if y[i] * (np.inner(self.w, X[i]) + self.b) <= 0:
                 # 误分类时调整平面的方向和截距 使超平面向该误分类的一侧移动
                 self.modifed = True
-                self.w += X[i] * y[i]
-                self.b += y[i]
+                self.w += self.eta * X[i] * y[i]
+                self.b += self.eta * y[i]
 
     def fit(self, X, y) -> P:
         # 如果有修改，则继续进行训练，并把该轮次训练状态设置为还未修改
