@@ -1,6 +1,7 @@
 import numpy as np
 from typing import TypeVar
 
+# TODO: 简化该类参数传递，并且似乎应该每次随机打乱训练数据
 P = TypeVar('P', bound='Perceptron')
 class Perceptron:
     w = np.array([0, 0])
