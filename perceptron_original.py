@@ -10,10 +10,13 @@ class Perceptron:
         self.eta = eta
         pass
 
+    def _classify(self, x) -> int:
+        return np.inner(self.w, x) + self.b
+
     def _fit_once(self, X, y) -> None:
         for i in range(X.shape[0]):
             # 样本点到超平面距离不为正，则处于错误的数据集中
-            if y[i] * (np.inner(self.w, X[i]) + self.b) <= 0:
+            if y[i] * self._classify(X[i]) <= 0:
                 # 误分类时调整平面的方向和截距 使超平面向该误分类的一侧移动
                 self.modifed = True
                 self.w += self.eta * X[i] * y[i]

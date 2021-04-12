@@ -7,7 +7,7 @@ class KNearestNeighbor:
     p = 2
     def __init__(self, k = 5, p = 2) -> None:
         '''
-        k: 选取几个近邻进行判断，必须为奇数
+        k: 选取几个近邻进行判断
         p: 两者距离计算的度量
         '''
         self.k = k
@@ -43,6 +43,7 @@ class KNearestNeighbor:
             dis.append((distance, self.y[i]))
         dis = sorted(dis, key = lambda x : x[0])
 
+        # 取出前k个近邻并求类别中的众数
         res = []
         for i in range(self.k):
             res.append(dis[i][1])
