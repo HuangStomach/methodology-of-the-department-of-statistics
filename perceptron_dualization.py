@@ -3,10 +3,8 @@ from typing import TypeVar
 
 P = TypeVar('P', bound='Perceptron')
 class Perceptron:
-    # alpha
     b = 0
     eta = 1
-    # gram # Gram matrix
     modifed = True
     def __init__(self, eta = 1) -> None:
         self.eta = eta
