@@ -17,7 +17,7 @@ class KDTree:
         '''
         self.k = k
 
-    def _fit(self, left, right, deep):
+    def _build(self, left, right, deep):
         if left > right:
             return None
         # 按照该划分的坐标轴对数据进行部分排序
@@ -26,8 +26,8 @@ class KDTree:
         
         mid = (left + right + 1) // 2
         node = self.Node(self.X[mid][0], self.X[mid][1])
-        node.left = self._fit(left, mid - 1, deep + 1)
-        node.right = self._fit(mid + 1, right, deep + 1)
+        node.left = self._build(left, mid - 1, deep + 1)
+        node.right = self._build(mid + 1, right, deep + 1)
 
         return node
 
@@ -42,7 +42,7 @@ class KDTree:
         self.X = sorted(self.X, key = lambda x : x[0][0])
 
         # kd树的根结点，递归生成
-        self.root = self._fit(0, len(self.X) - 1, 0)
+        self.root = self._build(0, len(self.X) - 1, 0)
         return self
     
     '''
