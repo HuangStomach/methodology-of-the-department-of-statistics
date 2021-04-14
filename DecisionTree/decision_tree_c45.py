@@ -1,13 +1,14 @@
+import math
 from decision_tree import DecisionTree
 
-class DecisionTreeId3(DecisionTree):
+class DecisionTreeC45(DecisionTree):
     def __init__(self, epsilon) -> None:
         DecisionTree.__init__(self, epsilon)
         pass
 
     def information_gain(self, X, y, ignore) -> list:
         '''
-        计算信息增益
+        计算信息增益比 information_gain_ratio
         X: 数据集
         y: 分类标记
         ignore: 忽略具体特征下标
@@ -23,14 +24,23 @@ class DecisionTreeId3(DecisionTree):
                 continue
 
             condition_entropy = 0.0 # 经验条件熵
+            feature_entropy = 0.0 # 特征熵
             for f, item in d[i].items():
                 condition_entropy += item[0] / length * self._exp_entropy(item[0], item[1])
-            res.append(exp_entropy - condition_entropy)
+                feature_entropy -= item[0] / length * math.log(item[0] / length, 2)
+                
+            res.append((exp_entropy - condition_entropy) / feature_entropy)
 
         return res
 
     def fit(self, X, y):
         self.root = self._build(X, y)
+        pass
+    
+    def pruning(self):
+        '''
+        TODO: 决策树剪枝
+        '''
         pass
 
     def show(self):
@@ -58,5 +68,5 @@ X_train = [
 
 y_train = [-1, -1, 1, 1, -1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1]
 
-decision = DecisionTreeId3()
+decision = DecisionTreeC45()
 decision.fit(X_train, y_train)
