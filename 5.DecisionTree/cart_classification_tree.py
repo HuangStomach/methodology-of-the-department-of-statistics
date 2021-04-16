@@ -94,6 +94,12 @@ class CartClassificationTree:
         
         self._build(X, y, 1)
         print(self.tree)
+    
+    def pruning(self):
+        '''
+        TODO: 决策树剪枝
+        '''
+        pass
 
 X_train = [
     [0, 0, 0, 2],

@@ -32,6 +32,12 @@ class DecisionTreeId3(DecisionTree):
     def fit(self, X, y):
         self.root = self._build(X, y)
         pass
+    
+    def pruning(self):
+        '''
+        TODO: 决策树剪枝
+        '''
+        pass
 
     def show(self):
         '''
