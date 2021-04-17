@@ -1,8 +1,6 @@
 import numpy as np
 from typing import TypeVar
 
-from sklearn.utils.validation import FLOAT_DTYPES
-
 P = TypeVar('P', bound='Naive_Bayes')
 class Naive_Bayes:
     _p = {}

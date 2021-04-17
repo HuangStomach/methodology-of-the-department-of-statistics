@@ -32,13 +32,6 @@ class CartClassificationTree:
             
             res[feature] = len(X_eq) / len(X) * self._gini(y_eq) + len(X_else) / len(X) * self._gini(y_else)
         return res
-
-    def _tags_count(self, X, y, index, feature, op = 'eq'):
-        # 样本集合在某个特征值取特定值时的分类数量
-        y_new = []
-        if op == 'eq': y_new = [y for i, y in enumerate(y) if X[i][index] == feature]
-        else : y_new = [y for i, y in enumerate(y) if X[i][index] != feature]
-        return np.unique(y_new)
     
     def _min_gini(self, gini_f) -> tuple:
         # gini_f 每个特征值下的基尼指数
@@ -52,13 +45,30 @@ class CartClassificationTree:
                 m = gini
                 index = i
                 f = val
-        
+        # 返回对应的特征值的索引和符合该最小基尼指数的特征值
         return (index, f)
+
+    def _loss_function(self) -> float:
+
+        pass
+
+    def _tags_count(self, X, y, index, feature, op = 'eq'):
+        # 样本集合在某个特征值取特定值时的分类数量
+        y_new = []
+        if op == 'eq': y_new = [y for i, y in enumerate(y) if X[i][index] == feature]
+        else : y_new = [y for i, y in enumerate(y) if X[i][index] != feature]
+        return y_new
 
     def _add_node(self, index, node) -> None:
         # 给数组动态扩容
         if index >= len(self.tree):
             self.tree.extend(np.zeros(index - len(self.tree) + 1))
+        # 节点结构:[
+        #   条件: 'eq,ne'
+        #   特征值的索引
+        #   特征值
+        #   该条件下分类的集合
+        # ]
         self.tree[index] = node
         
     def _build(self, X, y, father, ignore = set()) -> None:
@@ -76,14 +86,14 @@ class CartClassificationTree:
         # 符合该特征条件的进行节点生成
         eq = self._tags_count(X, y, min_gini[0], min_gini[1])
         self._add_node(index, ('eq', min_gini[0], min_gini[1], eq))
-        if len(eq) > 1: # 该条件下分类未归一，则筛选出数据子集继续分类
+        if len(np.unique(eq)) > 1: # 该条件下分类未归一，则筛选出数据子集继续分类
             X_new = np.array([x for x in X if x[min_gini[0]] == min_gini[1]])
             y_new = np.array([y for i, y in enumerate(y) if X[i][min_gini[0]] == min_gini[1]])
             self._build(X_new, y_new, index, ignore)
             
         ne = self._tags_count(X, y, min_gini[0], min_gini[1], 'ne')
         self._add_node(index + 1, ('ne', min_gini[0], min_gini[1], ne))
-        if len(ne) > 1: # 该条件下分类未归一，则筛选出数据子集继续分类
+        if len(np.unique(ne)) > 1: # 该条件下分类未归一，则筛选出数据子集继续分类
             X_new = np.array([x for x in X if x[min_gini[0]] != min_gini[1]])
             y_new = np.array([y for i, y in enumerate(y) if X[i][min_gini[0]] != min_gini[1]])
             self._build(X_new, y_new, index + 1, ignore)
@@ -99,6 +109,11 @@ class CartClassificationTree:
         '''
         TODO: 决策树剪枝
         '''
+        k = 0
+        alpha = float('inf')
+        for node in self.tree:
+
+            pass
         pass
 
 X_train = [
