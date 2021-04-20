@@ -1,4 +1,5 @@
 # TODO: 实现
+import math
 import numpy as np
 from typing import TypeVar
 
@@ -48,9 +49,17 @@ class CartClassificationTree:
         # 返回对应的特征值的索引和符合该最小基尼指数的特征值
         return (index, f)
 
-    def _loss_function(self) -> float:
-
-        pass
+    def _loss_function(self, tree) -> float:
+        length = len(tree)
+        res = 0.0
+        for i, node in enumerate(tree):
+            child_index = 2 * i
+            # 若为叶子节点
+            if child_index >= length or (tree[child_index] == 0 and tree[child_index + 1] == 0):
+                n = len(node[3])
+                for y in np.unique(node[3]):
+                    res -= node[3].count(y) * math.log(node[3].count(y) / n, 2)
+        return res
 
     def _tags_count(self, X, y, index, feature, op = 'eq'):
         # 样本集合在某个特征值取特定值时的分类数量
