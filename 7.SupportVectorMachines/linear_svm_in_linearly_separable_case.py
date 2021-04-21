@@ -2,7 +2,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 线性可分支持向量机
-# FIXME: 有问题
 class LinearSVM:
     times = 200
     alpha = 0.01
@@ -101,7 +100,7 @@ class LinearSVM:
     def predict(self, X_test) -> list:
         res = []
         for x in X_test:
-            res.append(np.sign(self.kernel(x, self.w) - self.b))
+            res.append(np.sign(self.kernel(x, self.w) + self.b))
         return np.array(res)
 
     def score(self, X_test, y_test):
@@ -124,6 +123,4 @@ X_train, X_test, y_train, y_test = train_test_split(
 
 svm = LinearSVM()
 svm.fit(X_train, y_train)
-print(y_test)
-print(svm.predict(X_test))
-
+print(svm.score(X_test, y_test))
