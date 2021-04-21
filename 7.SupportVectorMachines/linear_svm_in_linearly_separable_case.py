@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # 线性可分支持向量机
-# 参考 https://blog.csdn.net/qq_39320588/article/details/104117596
+# FIXME: 有问题
 class LinearSVM:
     times = 200
     alpha = 0.01
@@ -119,7 +119,7 @@ for y in iris_dataset['target']:
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
-    iris_dataset['data'][:100, :2], target[:100], random_state=0
+    iris_dataset['data'][:100], target[:100], random_state=0
 )
 
 svm = LinearSVM()
