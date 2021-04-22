@@ -4,11 +4,12 @@ import matplotlib.pyplot as plt
 # 线性可分支持向量机
 class LinearSVM:
     times = 200
-    alpha = 0.01
+    C = 1.0
     b = 0.0
 
-    def __init__(self, times = 200):
+    def __init__(self, times = 200, C = 1.0):
         self.times = times # 最大迭代次数
+        self.C = C # 松弛变量
 
     def _violation_alpha(self):
         # 遍历样本, 检验是否满足KKT
@@ -21,15 +22,15 @@ class LinearSVM:
             return i, j # 返回两个错误的索引
     
     # 决策函数 Σαi*yi*dot(x, xi) + b
-    def decision_function(self, i):
+    def decision_function(self, x):
         r = self.b
         for j in range(self.n):
-            r += self.alpha[j] * self.y[j] * self.kernel(self.X[i], self.X[j])
+            r += self.alpha[j] * self.y[j] * self.kernel(x, self.X[j])
         return r
 
     def _KKT(self, i): 
         # KKT 互补对偶条件
-        st = self.decision_function(i) * self.y[i] # 约束条件 
+        st = self.decision_function(self.X[i]) * self.y[i] # 约束条件 
         if self.alpha[i] == 0 and st >= 1: return True
         elif 0 < self.alpha[i] < self.C and st == 1: return True
         elif self.alpha[i] == self.C and st <= 1: return True
@@ -46,9 +47,7 @@ class LinearSVM:
         self.y = y
 
         self.alpha = np.zeros(self.n) # 拉格朗日乘子
-        self.error = [(self.decision_function(i) - y[i]) for i in range(self.n)] # 存储误差
-        # 松弛变量
-        self.C = 1.0
+        self.error = [(self.decision_function(X[i]) - y[i]) for i in range(self.n)] # 存储误差
 
         for _i in range(self.times):
             i1, i2 = self._violation_alpha()
@@ -90,17 +89,15 @@ class LinearSVM:
             elif 0 < alpha2_new < self.C: self.b = b2_new
             else: self.b = (b1_new + b2_new) / 2 # 选择中点
 
-            self.error[i1] = self.decision_function(i1) - y[i1]
-            self.error[i2] = self.decision_function(i2) - y[i2]
-        
-        self.w = np.zeros(self.m)
-        for i in range(self.n):
-            self.w += self.alpha[i] * y[i] * np.array(X[i])
+            self.error[i1] = self.decision_function(X[i1]) - y[i1]
+            self.error[i2] = self.decision_function(X[i2]) - y[i2]
+
+        return self
 
     def predict(self, X_test) -> list:
         res = []
         for x in X_test:
-            res.append(np.sign(self.kernel(x, self.w) + self.b))
+            res.append(np.sign(self.decision_function(x)))
         return np.array(res)
 
     def score(self, X_test, y_test):
