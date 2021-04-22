@@ -30,14 +30,30 @@ class Perceptron:
             self._fit_once(X, y)
         return self
 
-X = np.array([
-    [3, 3],
-    [4, 3],
-    [1, 1]
-])
-y = np.array([1, 1, -1])
+    def predict(self, X_test) -> list:
+        res = []
+        for x in X_test:
+            res.append(np.sign(np.dot(x, self.w) + self.b))
+        return np.array(res)
+
+    def score(self, X_test, y_test):
+        right = 0
+        for i, y in enumerate(self.predict(X_test)):
+            if (y == y_test[i]): right += 1
+        return right / len(X_test)
+
+from sklearn.datasets import load_iris
+iris_dataset = load_iris()
+target = []
+for y in iris_dataset['target']:
+    if y == 0: target.append(-1)
+    else: target.append(y)
+
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(
+    iris_dataset['data'][:100], target[:100], random_state=0
+)
 
 p = Perceptron()
-p.fit(X, y)
-print(p.w)
-print(p.b)
+p.fit(X_train, y_train)
+print(p.score(X_test, y_test))
