@@ -12,8 +12,22 @@ class LinearSVM:
         self.C = C # 松弛变量
 
     def _violation_alpha(self):
+        # 选择两个违反KKT条件的变量，固定其他变量，针对该两个变量进行二次规划
         # 遍历样本, 检验是否满足KKT
-        for i in range(self.n):
+
+        # 先选择满足条件 0 < alpha < C也就是间隔边界上的支持向量
+        error = None
+        for i in [i for i, alpha in enumerate(self.alpha) if alpha > 0 and alpha < self.C]:
+            if self._KKT(i): continue
+            
+            error = self.error[i]
+            # 如果error是+，选择最小的；如果error是负的，选择最大的
+            j = self.error.index(min(self.error) if error >= 0 else max(self.error))
+            return i, j # 返回两个错误的索引
+
+        # 如果没有再遍历全部结果集
+        for i in [i for i, alpha in enumerate(self.alpha) if alpha == 0 or alpha == self.C]:
+            # 遍历样本, 检验是否满足KKT
             if self._KKT(i): continue
 
             error = self.error[i]
@@ -71,9 +85,9 @@ class LinearSVM:
 
             alpha2_new_unc = self.alpha[i2] + y[i2] * (error1 - error2) / eta # 沿着约束方向未经剪辑时α2的最优解
 
-            alpha2_new = alpha2_new_unc
             if alpha2_new_unc > H: alpha2_new = H
             elif alpha2_new_unc < L: alpha2_new = L
+            else: alpha2_new = alpha2_new_unc
 
             # α1new = α1old + y1y2(α2old - α2new)
             alpha1_new = self.alpha[i1] + y[i1] * y[i2] * (self.alpha[i2] - alpha2_new)
@@ -83,8 +97,7 @@ class LinearSVM:
 
             self.alpha[i1] = alpha1_new
             self.alpha[i2] = alpha2_new
-            if 0 < alpha1_new < self.C: self.b = b1_new
-            elif 0 < alpha2_new < self.C: self.b = b2_new
+            if 0 < alpha1_new < self.C and 0 < alpha2_new < self.C: self.b = b1_new
             else: self.b = (b1_new + b2_new) / 2 # 选择中点
 
             self.error[i1] = self.decision_function(X[i1]) - y[i1]
