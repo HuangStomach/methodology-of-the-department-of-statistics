@@ -59,7 +59,6 @@ class LinearSVM:
             else:
                 L = max(0, self.alpha[i2] - self.alpha[i1])
                 H = min(self.C, self.C + self.alpha[i2] - self.alpha[i1])
-            # if L == H: continue
 
             error1 = self.error[i1]
             error2 = self.error[i2]
@@ -68,8 +67,7 @@ class LinearSVM:
             K22 = self.kernel(X[i2], X[i2])
             K12 = self.kernel(X[i1], X[i2])
             K21 = self.kernel(X[i2], X[i1])
-            eta = K11 + K22 - K12
-            # if eta <= 0: continue
+            eta = K11 + K22 - 2 * K12
 
             alpha2_new_unc = self.alpha[i2] + y[i2] * (error1 - error2) / eta # 沿着约束方向未经剪辑时α2的最优解
 
