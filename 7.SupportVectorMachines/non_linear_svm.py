@@ -8,9 +8,12 @@ class LinearSVM:
     C = 1.0
     b = 0.0
 
-    def __init__(self, times = 200, C = 1.0):
+    def __init__(self, times = 200, C = 1.0, kernel_function = 'polynomial', p = 2, sigma = 1.0):
         self.times = times # 最大迭代次数
         self.C = C # 松弛变量
+        self.kernel_function = kernel_function # 核函数
+        self.p = p # 多项式核函数的次数
+        self.sigma = sigma # 高斯径向量分母
 
     def _violation_alpha(self):
         # 选择两个违反KKT条件的变量，固定其他变量，针对该两个变量进行二次规划
@@ -82,10 +85,16 @@ class LinearSVM:
         for j in range(self.n):
             r += self.alpha[j] * self.y[j] * self.kernel(x, self.X[j])
         return r
-    
-    # 核方法
+
+    # 核函数
     def kernel(self, x1, x2):
-        return np.dot(x1, x2)
+        if self.kernel_function == 'gaussian':
+            norm = - np.linalg.norm(np.array(x1) - np.array(x2)) ** 2
+            return math.exp(norm / 2 * (self.sigma ** 2))
+        
+        # 默认视为使用多项式核函数，万一打错了给你纠正一下，不报错了
+        self.kernel_function = 'polynomial'
+        return (np.dot(x1, x2) + 1) ** self.p
 
     def fit(self, X, y):
         self.m = len(X[0])
@@ -98,7 +107,7 @@ class LinearSVM:
 
         for _i in range(self.times):
             i1, i2, alpha2_new = self._violation_alpha()
-            if math.isnan(alpha2_new): break # 无法选出合适的 alpha2_new 也就是符合精度范围了，则跳出
+            if math.isnan(alpha2_new): break # 无法选出合适的 alpha2_new 也就是符合精度反胃了，
 
             # TODO: 待优化 存储 kernel
             error1 = self.error[i1]
