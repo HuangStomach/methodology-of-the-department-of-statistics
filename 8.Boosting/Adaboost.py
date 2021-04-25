@@ -21,10 +21,9 @@ class AdaBoost:
         y2: 反类
         '''
         error = 0.0
-        for i in range(0, mid): # 属于y1的集合
-            if self._y[i] != y1: error += self._omega[i]
-        for i in range(mid, self.n): # 属于y2的集合
-            if self._y[i] != y2: error += self._omega[i]
+        for i in range(self.n):
+            y = y1 if i < mid else y2
+            if self._y[i] != y: error += self._omega[i]
         
         return error
 
@@ -71,11 +70,13 @@ class AdaBoost:
 
         for _i in range(self.times):
             error, classify_function = self._classification()
+            index = len(self._alpha) # 当前轮次
             self._classify_functions.append(classify_function) # 记录当前最有效的弱分类器
-            if error == 0.0: self._alpha.append(1.0) # 该分类完整无缺的进行分类
+
+            if error == 0.0: self._alpha.append(1.0) # 该分类完整无缺的进行分类 则默认权重最大
             else: self._alpha.append(math.log((1 - error) / error) / 2) # 计算当前分类器的权重
+
             self._result.append([])
-            index = len(self._alpha) - 1 # 当前轮次
 
             for i, x in enumerate(self.X):
                 self._result[index].append(self._alpha[index] * self._classify(x, index))
