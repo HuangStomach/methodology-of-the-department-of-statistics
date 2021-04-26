@@ -76,21 +76,23 @@ class AdaBoost:
             if error == 0.0: self._alpha.append(1.0) # 该分类完整无缺的进行分类 则默认权重最大
             else: self._alpha.append(math.log((1 - error) / error) / 2) # 计算当前分类器的权重
 
-            self._result.append([])
+            self._result.append([]) # 暂存每个样本分类结果和权重的乘积
 
             for i, x in enumerate(self.X):
                 self._result[index].append(self._alpha[index] * self._classify(x, index))
     
-            misclassification = 0 # 记录误分类点个数
+            misclassification = False # 记录误分类点个数
             for i in range(self.n):
                 f = 0.0
-                for j in range(len(self._classify_functions)):
-                    f += self._result[j][i]
-                if np.sign(f) != y[i]: misclassification += 1
+                for j in range(len(self._classify_functions)): f += self._result[j][i]
+                if np.sign(f) != y[i]: 
+                    misclassification = True
+                    break
 
-            if misclassification == 0: break # 无误分类点，训练结束
-
-            # 否则继续计算
+            # 无误分类点，训练结束
+            if not misclassification: break
+            
+            # 否则继续计算每个样本的权重
             weight = []
             for i, x in enumerate(self.X):
                 weight.append(self.omega[i] * math.exp(-1 * y[i] * self._result[index][i]))
@@ -98,7 +100,7 @@ class AdaBoost:
 
             # 更新权重
             for i in range(self.n):
-                self.omega[i] = weight[i] / z 
+                self.omega[i] = weight[i] / z
 
         return self
     
@@ -117,6 +119,11 @@ class AdaBoost:
             if (y == y_test[i]): right += 1
         return right / len(X_test)
 
+X_train = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
+y_train = [1, 1, 1, -1, -1, -1, 1, 1, 1, -1]
+svm = AdaBoost()
+svm.fit(X_train, y_train)
+print(svm._classify_functions)
 
 from sklearn.datasets import load_iris
 iris_dataset = load_iris()
