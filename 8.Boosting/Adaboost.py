@@ -2,7 +2,6 @@ import math
 import numpy as np
 from typing import TypeVar
 
-
 # 适应提升算法
 P = TypeVar('P', bound='AdaBoost')
 class AdaBoost:
@@ -118,12 +117,6 @@ class AdaBoost:
         for i, y in enumerate(self.predict(X_test)):
             if (y == y_test[i]): right += 1
         return right / len(X_test)
-
-X_train = [[0], [1], [2], [3], [4], [5], [6], [7], [8], [9]]
-y_train = [1, 1, 1, -1, -1, -1, 1, 1, 1, -1]
-svm = AdaBoost()
-svm.fit(X_train, y_train)
-print(svm._classify_functions)
 
 from sklearn.datasets import load_iris
 iris_dataset = load_iris()
