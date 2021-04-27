@@ -130,6 +130,6 @@ X_train, X_test, y_train, y_test = train_test_split(
     iris_dataset['data'][:100], target[:100]
 )
 
-svm = AdaBoost()
-svm.fit(X_train, y_train)
-print(svm.score(X_test, y_test))
+ada = AdaBoost()
+ada.fit(X_train, y_train)
+print(ada.score(X_test, y_test))
