@@ -20,7 +20,7 @@ class CartClassificationTree:
 
     def _square_error(self, left, mid, right) -> float:
         # 计算平方误差
-        c1 = np.average(self.y[left:mid + 1]) if len(self.y[left:mid + 1]) > 0 else 0.0
+        c1 = np.average(self.y[left:mid]) if len(self.y[left:mid]) > 0 else 0.0
         c2 = np.average(self.y[mid:right]) if len(self.y[mid:right]) > 0 else 0.0
         return sum([(tag - c1) ** 2 for tag in self.y[left:mid]]) + sum([(tag - c2) ** 2 for tag in self.y[mid:right]])
     
