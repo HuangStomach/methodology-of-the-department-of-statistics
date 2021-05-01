@@ -2,10 +2,8 @@ import math
 import numpy as np
 from typing import TypeVar
 
-# 适应提升算法 简单实现一维数据的回归树
+# 向前向后算法
 P = TypeVar('P', bound='HMMForwardBackward')
-
-# 向前算法
 class HMMForwardBackward:
     def __init__(self, A, B, pi) -> None:
         self._A = A
