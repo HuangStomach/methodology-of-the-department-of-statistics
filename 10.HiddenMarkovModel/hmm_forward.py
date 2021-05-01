@@ -27,7 +27,6 @@ class HMMForward:
         
         return sum(self._alpha[t - 1])
 
-
 A = [
     [0.5, 0.2, 0.3],
     [0.3, 0.5, 0.2],
