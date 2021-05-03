@@ -16,10 +16,47 @@ class HMMBaumWelch:
         self._pi = pi
         return self
 
-    def fit(self, O, n) -> P:
+    def _em(self) -> P:
+        # E步 依据当前模型参数 计算分模型k对观测数据yi的响应度
+        _gamma = np.zeros((self._t, self.n), dtype = float)
+        _xi = np.zeros(self._t)
+
+        # E步 计算时刻t处于状态i的概率
+        for t in range(self._t):
+            total = 0.0
+            for i in range(self._n):
+                total += self._alpha[t][i] * self._beta[t][i]
+            for i in range(self._n):
+                _gamma[t][i] = self._alpha[t][i] * self._beta[t][i] / total
+        
+        # E步 计算时刻t处于状态i且时刻t+1处于状态j的概率
+        for t in range(self._t - 1):
+            _xi[t] = np.zeros((self._n, self._n))
+            total = 0.0
+            for i in range(self._n):
+                for j in range(self._n):
+                    total += self._alpha[t][i] * self._A[i][j] * self._B[O[t + 1]] * self._beta[t + 1][j]
+
+            for i in range(self._n):
+                for j in range(self._n):
+                    _xi[t][i][j] = self._alpha[t][i] * self._A[i][j] * self._B[O[t + 1]] * self._beta[t + 1][j] / total
+
+        # M 步计算新一轮迭代的模型参数
+        self._alpha_old = self._alpha.copy() # 不同高斯模型下的系数
+        self._mu_old = self._mu.copy() # 期望初值
+        self._sigma_old = self._sigma.copy() # 方差初值
+
+        for j in range(self._k):
+            self._mu[j] = sum([g * self.y[i] for i, g in enumerate(_gamma[j])]) / sum(_gamma[j])
+            self._sigma[j] = sum([g * (self.y[i] - self._mu[j]) ** 2 for i, g in enumerate(_gamma[j])]) / sum(_gamma[j])
+            self._alpha[j] = sum(_gamma[j]) / self.n
+        pass
+
+    def fit(self, O) -> P:
         '''
         O: Observation sequence 观测序列
         '''
+        self._O = O
         self._t = len(O)
         self._n = len(self._A)
         self._alpha = np.zeros((self._t, self._n), dtype = float)
@@ -40,6 +77,10 @@ class HMMBaumWelch:
                 self._beta[i][j] = 0.0
                 for k in range(self._n):
                     self._beta[i][j] += self._A[j][k] * self._B[k][O[i + 1]] * self._beta[i + 1][j]
+        
+        for _i in range(self._times):
+            self._em()
+            if self._convergence(): break
         
         return self
 
