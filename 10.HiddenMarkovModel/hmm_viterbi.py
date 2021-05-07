@@ -3,8 +3,6 @@ import numpy as np
 from copy import deepcopy
 from typing import TypeVar
 
-from numpy.core.fromnumeric import argmax
-
 # 适应提升算法 简单实现一维数据的回归树
 P = TypeVar('P', bound='HMMViterbi')
 # 向前算法
@@ -58,7 +56,7 @@ class HMMViterbi:
 
     def optimal_path(self) -> dict:
         p = max(self._delta[self._t - 1])
-        index = argmax(self._delta[self._t - 1])
+        index = np.argmax(self._delta[self._t - 1])
         path = []
         path.append(index)
         
