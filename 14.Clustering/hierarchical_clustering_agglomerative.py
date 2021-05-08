@@ -1,5 +1,4 @@
 import numpy as np
-from copy import deepcopy
 from typing import TypeVar
 
 # 聚合聚类算法
@@ -29,9 +28,7 @@ class AgglomerativeClustering:
         return total ** 0.5
 
     def fit(self, X) -> P:
-        self._X = deepcopy(X)
         self._n = len(X)
-        self._i = 0
         self._m = len(X[0])
         self._d = np.zeros((self._n, self._n), dtype=float)
         self._c = np.zeros(self._n, dtype=int)
@@ -43,7 +40,7 @@ class AgglomerativeClustering:
             self._c[i] = i
             for j in range(self._n):
                 if i == j or self._d[i][j] > 0: continue
-                d = self._distance(self._X[i], self._X[j])
+                d = self._distance(X[i], X[j])
                 self._d[i][j] = d
                 self._d[j][i] = d
                 if d < m:
