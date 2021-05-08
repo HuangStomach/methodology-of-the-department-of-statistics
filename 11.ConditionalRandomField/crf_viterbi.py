@@ -1,4 +1,3 @@
-
 import numpy as np
 from copy import deepcopy
 from typing import TypeVar
@@ -24,8 +23,6 @@ class CRFIIS:
         if (k < self._k1):
             return self._feature_t(self._t_lambda[k], y1, y2, i) 
         return self._feature_s(self._s_mu[k - self._k1], y2, i)
-
-    
 
     def fit(self, t_lambda, s_mu) -> P:
         self._t_lambda = t_lambda
