@@ -24,7 +24,7 @@ class AgglomerativeClustering:
         # 欧式距离
         total = 0.0
         for i in range(self._m):
-            total += abs(x1[i] - x2[i]) ** 2
+            total += (x1[i] - x2[i]) ** 2
         return total ** 0.5
 
     def fit(self, X) -> P:
