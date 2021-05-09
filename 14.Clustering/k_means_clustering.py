@@ -28,7 +28,7 @@ class KMeansClustering:
         self._n = len(X)
         self._m = len(X[0])
         self._X = deepcopy(X)
-        self._y = np.zeros(self._n)
+        self._y = np.zeros(self._n, dtype=int)
 
         # 取出前k个作为簇的中心
         self._centers = []
@@ -60,17 +60,22 @@ class KMeansClustering:
 
         return self
 
-    def score(self, y) -> float:
-        _revise = []
-        pass
+    def score(self, y) -> float: # 简单手动对类别进行一些转换
+        correct = 0
+        for i in range(self._n):
+            if self._y[i] == 1 and y[i] == 2: correct += 1
+            elif self._y[i] == 2 and y[i] == 1: correct += 1
+            elif self._y[i] == 0 and y[i] == 0: correct += 1
+        return correct / self._n
 
-from sklearn.datasets import load_boston
-boston_dataset = load_boston()
+from sklearn.datasets import load_iris
+iris_dataset = load_iris()
 
 from sklearn.model_selection import train_test_split
 X_train, X_test, y_train, y_test = train_test_split(
-    boston_dataset['data'], boston_dataset['target'], random_state=5
+    iris_dataset['data'], iris_dataset['target'], random_state=5
 )
 
-cluster = KMeansClustering(2)
+cluster = KMeansClustering(3)
 cluster.fit(X_train)
+print(cluster.score(y_train))
