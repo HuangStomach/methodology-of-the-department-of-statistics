@@ -7,7 +7,6 @@ P = TypeVar('P', bound='KMeansClustering')
 class KMeansClustering:
     def __init__(self, k = 2) -> None:
         self._k = k
-        pass
 
     def _distance(self, x1, x2) -> float:
         # 欧式距离
