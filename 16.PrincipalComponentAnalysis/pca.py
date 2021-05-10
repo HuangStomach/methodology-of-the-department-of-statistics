@@ -9,7 +9,7 @@ class PCA:
     def __init__(self, threshold) -> None:
         self._threshold = threshold
 
-    def standardize(self, X) -> list:
+    def standardize(self, X) -> list: # 标准化 使样本元素处于均值0方差1范围内
         n = len(X)
         m = len(X[0])
 
@@ -21,7 +21,7 @@ class PCA:
             else: _X.append(X[:, i] - mean)
         return self._transpose(_X)
     
-    def _transpose(self, X) -> list:
+    def _transpose(self, X) -> list: # 转置矩阵
         n = len(X)
         m = len(X[0])
         _X = np.zeros((m, n), dtype=float)
@@ -49,7 +49,7 @@ class PCA:
             k += 1
             if add / total_lambda >= self._threshold: break
 
-        return np.dot(_Vt[:k], np.transpose(X)) # 返回主成分矩阵
+        return np.dot(_Vt[:k], self._transpose(X)) # 返回主成分矩阵
 
 X_train = np.array([
     [1, 0, 0, 0],
