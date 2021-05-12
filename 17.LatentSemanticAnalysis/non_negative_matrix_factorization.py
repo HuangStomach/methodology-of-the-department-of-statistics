@@ -29,24 +29,6 @@ class NMF:
             total = sum(x ** 2 for x in X[:,i]) ** 0.5
             _X.append(X[:, i] / total)
         return self._transpose(_X)
-
-
-    def _standardize(self, X) -> list:
-        '''
-        标准化 使样本元素处于均值0方差1范围内
-        ### Parameters
-        * X 需标准化矩阵
-        '''
-        n = len(X)
-        m = len(X[0])
-
-        _X = []
-        for i in range(m):
-            mean = np.mean(X[:,i])
-            sii = np.sum((X[:,i] - mean) ** 2) / (n - 1)
-            if sii > 0: _X.append((X[:, i] - mean) / sii)
-            else: _X.append(X[:, i] - mean)
-        return self._transpose(_X)
     
     def _transpose(self, X) -> list:
         '''
