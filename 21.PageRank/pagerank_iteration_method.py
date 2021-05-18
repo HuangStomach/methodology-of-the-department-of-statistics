@@ -35,7 +35,7 @@ class PageRank:
         * B 判敛矩阵2
         '''
         for i in range(self._n):
-            if A[i] - B[i] >= self._epsilon: return False
+            if abs(A[i] - B[i]) >= self._epsilon: return False
         return True
     
     def transform(self, M) -> None:
