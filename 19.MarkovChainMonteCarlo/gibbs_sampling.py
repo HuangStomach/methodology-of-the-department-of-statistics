@@ -1,7 +1,6 @@
 from copy import deepcopy
 import math
 import numpy as np
-from numpy.lib.function_base import append
 
 # 吉布斯 二元正太分布抽样
 class MCMC:
